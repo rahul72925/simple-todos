@@ -29,13 +29,13 @@ const SEED_PASSWORD = "password";
 
 Meteor.startup(async () => {
   if (!(await Accounts.findUserByUsername(SEED_USERNAME))) {
-    Accounts.createUser({
+    await Accounts.createUser({
       username: SEED_USERNAME,
       password: SEED_PASSWORD,
     });
   }
   const user = await Accounts.findUserByUsername(SEED_USERNAME);
-
+  console.log({ user });
   if ((await ProjectsCollection.find().countAsync()) === 0) {
     const projects = ["Project 1", "Project 2", "Project 3", "Project 4"];
 
