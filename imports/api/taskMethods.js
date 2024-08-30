@@ -1,18 +1,30 @@
 import { check } from "meteor/check";
 import { TasksCollection } from "../db/TasksCollection";
+import { ProjectsCollection } from "../db/ProjectsCollection";
 
 Meteor.methods({
-  async "tasks.insert"(text) {
+  async "tasks.insert"(text, projectId) {
     check(text, String);
+    check(projectId, String);
 
     if (!this.userId) {
       throw new Meteor.Error("Not authorized.");
+    }
+
+    if (
+      !(await ProjectsCollection.findOneAsync({
+        _id: projectId,
+        userId: this.userId,
+      }))
+    ) {
+      throw new Meteor.Error("Invalid project");
     }
 
     await TasksCollection.insertAsync({
       text,
       createdAt: new Date(),
       userId: this.userId,
+      projectId,
     });
   },
   async "tasks.remove"(taskId) {
@@ -22,7 +34,10 @@ Meteor.methods({
       throw new Meteor.Error("Not authorized.");
     }
 
-    const task = TasksCollection.findOne({ _id: taskId, userId: this.userId });
+    const task = TasksCollection.findOneAsync({
+      _id: taskId,
+      userId: this.userId,
+    });
 
     if (!task) {
       throw new Meteor.Error("Not authorized.");
