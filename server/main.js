@@ -36,21 +36,6 @@ Meteor.startup(async () => {
   }
   const user = await Accounts.findUserByUsername(SEED_USERNAME);
 
-  if ((await TasksCollection.find().countAsync()) === 0) {
-    const tasks = [
-      "First Task",
-      "Second Task",
-      "Third Task",
-      "Fourth Task",
-      "Fifth Task",
-      "Sixth Task",
-      "Seventh Task",
-    ];
-
-    for (const task of tasks) {
-      await insertTask(task, user);
-    }
-  }
   if ((await ProjectsCollection.find().countAsync()) === 0) {
     const projects = ["Project 1", "Project 2", "Project 3", "Project 4"];
 
